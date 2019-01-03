@@ -1,0 +1,34 @@
+resource "aws_instance" "mailhub" {
+  ami                    = "${var.ubuntu-16LTS-ami}"
+  instance_type          = "t2.nano"
+  key_name               = "aws-key"
+  subnet_id              = "${aws_subnet.PublicA.id}"
+  vpc_security_group_ids = [ "${aws_security_group.public_mailhub.id}" ]
+  iam_instance_profile   = "MAILHUB_profile"
+  user_data              = <<EOF
+#!/bin/bash -x
+curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
+EOF
+  tags {
+    Name = "mailhub"
+    Role = "mailhub"
+    Environment = "${var.region_name}_${var.environment}"
+    Region_DNS = "${var.region_name}.${var.dnsDomain2}"
+  }
+}
+
+resource "aws_route53_record" "mx-record" {
+   zone_id = "${var.dnsZone2}"
+   name = "${var.dnsDomain2}"
+   type = "MX"
+   ttl = "30"
+   records = ["10 ${aws_instance.mailhub.public_ip}"]
+}
+
+resource "aws_route53_record" "mailhub-dns" {
+   zone_id = "${var.dnsZone2}"
+   name = "mailhub.${var.region_name}.${var.dnsDomain2}"
+   type = "A"
+   ttl = "30"
+   records = ["${aws_instance.mailhub.public_ip}"]
+}
