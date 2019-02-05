@@ -9,6 +9,13 @@ fi
 
 PATH=/usr/local/sbin:/sbin:/bin:/usr/sbin:/usr/bin
 
+# Connect to remote repos without question
+mkdir -p /root/.ssh
+chmod 0700 /root/.ssh
+echo "StrictHostKeyChecking no" > /root/.ssh/config
+rm -f /root/.ssh/known_hosts >/dev/null 2>&1
+# ln -sf /dev/null /root/.ssh/known_hosts
+
 # Set default installer, environment, and repositories these can be modified by a tag, or on non AWS instances,
 # They can be modified by env variable. USeful for on site images, and testing
 #
@@ -44,8 +51,7 @@ then
         # Install initial needed packages and tools
         #
         yum install -y http://dl.fedoraproject.org/pub/epel/epel-release-latest-${release}.noarch.rpm
-        yum install python-pip -y
-        pip install awscli --upgrade
+        yum install -y awscli
     fi
 
     if [ "${distro}" == "Ubuntu" ]
@@ -77,6 +83,18 @@ then
     git_suffix=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^Git_Suffix/ {print $2}')
 
     region_dns=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^Region_DNS/ {print $2}')
+
+    ssh_key_value=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^SSH_Key_Value/ {print $2}')
+
+    ssh_key_id=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^SSH_Key_ID/ {print $2}')
+
+    resource_group=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^Resource_Group/ {print $2}')
+
+    # This bit takes the option of setting up access to a code commit repo. It takes the contents from terraform. Would like to improve
+    id_file=/root/.ssh/id_rsa.${ssh_key_id}
+    echo -e "${ssh_key_value}" > ${id_file}
+    echo -e "User ${ssh_key_id}\nIdentityFile ${id_file}" >> /root/.ssh/config
+    chmod 0600 ${id_file}
 else
     role=${ROLE:=base}
     hostname=${HOSTNAME:=hostname}
@@ -85,6 +103,7 @@ else
     environment=""
     installer=""
     repository=""
+    resource_group=""
     config_repo=""
     git_url=""
     git_suffix=""
@@ -115,14 +134,14 @@ fi
 #
 if [ "${git_suffix}" = "" ]
 then
-    # Naff workaround to exporting an empty class
-    #
-    if [ "${DEFAULT_GIT_SUFFIX}" = "null" ]
-    then
-        git_suffix=""
-    else
-        git_suffix=${DEFAULT_GIT_SUFFIX}
-    fi
+    git_suffix=${DEFAULT_GIT_SUFFIX}
+fi
+
+# Naff workaround to exporting an empty class
+#
+if [ "${git_suffix}" = "null" ]
+then
+    git_suffix=""
 fi
 
 case ${installer} in
@@ -167,6 +186,8 @@ then
     echo "HOSTNAME=${hostname}" >> /etc/build_custom_config
     sed -i '/ENVIRONMENT=/d' /etc/build_custom_config >/dev/null 2>&1
     echo "ENVIRONMENT=${environment}" >> /etc/build_custom_config
+    sed -i '/RESOURCE_GROUP=/d' /etc/build_custom_config >/dev/null 2>&1
+    echo "RESOURCE_GROUP=${resource_group}" >> /etc/build_custom_config
 
     if [ "${distro}" == "CentOS" -o "${distro}" == "RedHatEnterpriseServer" ]
     then
@@ -212,7 +233,10 @@ then
         git clone ${git_url}/${repository}${git_suffix}
         git clone ${config_repo}
         config_repo_name=$(basename ${config_repo} .git)
-        ln -sf ${git_dir}/${config_repo_name} ${git_dir}/config
+        if [ ! -f ${git_dir}/config ]
+        then
+            ln -sf ${git_dir}/${config_repo_name} ${git_dir}/config
+        fi
         mkdir -p ${puppet_root}/hieradata
         ln -sf ${git_dir}/config/hieradata/hiera.yaml ${puppet_root}/hiera.yaml
         ln -sf ${git_dir}/config/hieradata/global.yaml ${puppet_root}/hieradata/global.yaml
