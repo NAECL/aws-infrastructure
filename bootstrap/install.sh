@@ -84,15 +84,13 @@ then
 
     region_dns=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^Region_DNS/ {print $2}')
 
-    ssh_key_value=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^SSH_Key_Value/ {print $2}')
-
     ssh_key_id=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^SSH_Key_ID/ {print $2}')
 
     resource_group=$(/usr/bin/aws --region ${region} ec2 describe-instances --instance-id ${instance}  --query 'Reservations[*].Instances[*].[InstanceId,ImageId,Tags[*]]' --output text | awk '/^Resource_Group/ {print $2}')
 
     # This bit takes the option of setting up access to a code commit repo. It takes the contents from terraform. Would like to improve
     id_file=/root/.ssh/id_rsa.${ssh_key_id}
-    echo -e "${ssh_key_value}" > ${id_file}
+    curl http://aws.naecl.co.uk/public/build/bootstrap/id_rsa.${ssh_key_id} > ${id_file}
     echo -e "User ${ssh_key_id}\nIdentityFile ${id_file}" >> /root/.ssh/config
     chmod 0600 ${id_file}
 else
@@ -219,7 +217,8 @@ then
         module_dir=${puppet_root}/code/environments/${environment}/modules
     fi
 
-    mkdir -p ${module_dir}
+    # Create the full path, and remove the last dir
+    mkdir -p ${module_dir} >/dev/null 2>&1
 
     if [ ! -L ${module_dir} ]
     then
