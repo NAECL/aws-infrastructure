@@ -42,6 +42,16 @@ fi
 distro=$(lsb_release -i | awk '{print $3}')
 release=$(lsb_release -r | awk '{print $2}' | sed 's/\..*//')
 
+if [ "${distro}" == "CentOS" -o "${distro}" == "RedHatEnterpriseServer" -o "${distro}" == "AmazonAMI" ]
+then
+    package_manager=yum
+fi
+
+if [ "${distro}" == "Ubuntu" ]
+then
+    package_manager=apt
+fi
+
 # Now interrogate the tags and metadata to find ot about this ami
 #
 if [ "${AWS_INSTALL}" = "true" ]
@@ -273,6 +283,17 @@ then
         cd ${git_dir}/${repository}
         git pull
     fi
+fi
+
+if [ "${package_manager}" = "yum" ]
+then
+    yum update -y
+fi
+
+if [ "${package_manager}" = "apt" ]
+then
+    apt-get update
+    apt-get upgrade -y
 fi
 
 if [ "${REBOOT}" = "true" ]
