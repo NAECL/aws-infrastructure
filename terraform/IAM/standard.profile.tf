@@ -5,13 +5,13 @@
 # https://serverfault.com/questions/810890/aws-sync-between-s3-buckets-on-different-aws-accounts#811583
 #
 
-resource "aws_iam_instance_profile" "BASE_SERVER_profile" {
-  name  = "BASE_SERVER_profile"
-  role = "${aws_iam_role.BASE_SERVER_role.name}"
+resource "aws_iam_instance_profile" "STANDARD_profile" {
+  name  = "STANDARD_profile"
+  role = "${aws_iam_role.STANDARD_role.name}"
 }
 
-resource "aws_iam_role" "BASE_SERVER_role" {
-  name               = "BASE_SERVER_role"
+resource "aws_iam_role" "STANDARD_role" {
+  name               = "STANDARD_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -29,9 +29,9 @@ resource "aws_iam_role" "BASE_SERVER_role" {
 EOF
 }
 
-resource "aws_iam_role_policy" "BASE_SERVER_policy_S31" {
-  name        = "BASE_SERVER_policy_S31"
-  role        = "${aws_iam_role.BASE_SERVER_role.id}"
+resource "aws_iam_role_policy" "STANDARD_policy_S31" {
+  name        = "STANDARD_policy_S31"
+  role        = "${aws_iam_role.STANDARD_role.id}"
   policy      = <<EOF
 {
   "Version": "2012-10-17",
@@ -46,9 +46,9 @@ resource "aws_iam_role_policy" "BASE_SERVER_policy_S31" {
 EOF
 }
 
-resource "aws_iam_role_policy" "BASE_SERVER_policy_S33" {
-  name        = "BASE_SERVER_policy_S33"
-  role        = "${aws_iam_role.BASE_SERVER_role.id}"
+resource "aws_iam_role_policy" "STANDARD_policy_S33" {
+  name        = "STANDARD_policy_S33"
+  role        = "${aws_iam_role.STANDARD_role.id}"
   policy      = <<EOF
 {
     "Version": "2012-10-17",
