@@ -12,11 +12,11 @@ resource "aws_instance" "wordpress" {
   iam_instance_profile    = "STANDARD_profile"
   # disable_api_termination = "true"
   root_block_device {
-    volume_size = 25
+    volume_size = 8
   }
   user_data               = <<EOF
 #!/bin/bash -x
-curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
+curl http://aws.naecl.co.uk/public/build/bootstrap/install-test.sh | bash
 EOF
   tags {
     Name = "${var.serverName}"
@@ -28,17 +28,9 @@ EOF
 }
 
 resource "aws_route53_record" "wordpress-dns" {
-   zone_id = "${var.dnsZone}"
-   name = "${var.serverName}.${var.region_name}.${var.dnsDomain}"
-   type = "A"
-   ttl = "30"
-   records = ["${aws_instance.wordpress.public_ip}"]
-}
-
-resource "aws_route53_record" "anne-dns" {
-   zone_id = "${var.dnsZone}"
-   name = "anne.${var.region_name}.${var.dnsDomain}"
-   type = "A"
-   ttl = "30"
-   records = ["${aws_instance.wordpress.public_ip}"]
+  zone_id = "${var.dnsZone}"
+  name = "${var.serverName}.${var.region_name}.${var.dnsDomain}"
+  type = "A"
+  ttl = "30"
+  records = ["${aws_instance.wordpress.public_ip}"]
 }
