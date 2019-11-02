@@ -1,5 +1,7 @@
 #!/bin/bash -ux
 
+exec > /var/log/ami_install.log 2>&1
+
 config=/etc/build_custom_config
 
 if [ -f ${config} ]

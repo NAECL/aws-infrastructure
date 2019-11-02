@@ -16,7 +16,7 @@ resource "aws_instance" "wordpress" {
   }
   user_data               = <<EOF
 #!/bin/bash -x
-curl http://aws.naecl.co.uk/public/build/bootstrap/install-test.sh | bash
+curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
 EOF
   tags {
     Name = "${var.serverName}"
