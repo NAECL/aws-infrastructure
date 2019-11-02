@@ -23,7 +23,7 @@ variable "centos-6-ami" {
 }
 
 variable "centos-7-ami" {
-  default = "ami-262e9f5b"
+  default = "ami-0e1ab783dc9489f34"
 }
 
 variable "ubuntu-16LTS-ami" {
