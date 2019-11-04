@@ -10,10 +10,6 @@ resource "aws_instance" "wordpress" {
   subnet_id               = "${aws_subnet.PublicA.id}"
   vpc_security_group_ids  = [ "${aws_security_group.public_web.id}" ]
   iam_instance_profile    = "STANDARD_profile"
-  # disable_api_termination = "true"
-  root_block_device {
-    volume_size = 8
-  }
   user_data               = <<EOF
 #!/bin/bash -x
 curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
