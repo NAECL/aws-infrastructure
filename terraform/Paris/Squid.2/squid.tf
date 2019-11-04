@@ -20,6 +20,7 @@ EOF
     Environment = "${var.region_name}_${var.environment}"
     Region_DNS = "${var.region_name}.${var.dnsDomain}"
     Config_Repo = "https://github.com/NAECL/config-public.git"
+  }
 }
 
 resource "aws_route53_record" "squid-dns" {
