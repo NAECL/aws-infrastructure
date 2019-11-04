@@ -4,13 +4,13 @@ variable "serverName" {
 }
 
 resource "aws_instance" "squid" {
-  ami                    = "${var.ubuami}"
+  ami                    = "${var.centos-7-ami}"
   instance_type          = "t2.nano"
   key_name               = "aws-key"
   subnet_id              = "${aws_subnet.PublicA.id}"
-  vpc_security_group_ids = [ "${aws_security_group.public_mailhub.id}" ]
-  iam_instance_profile   = "SQUID_profile"
-  user_data               = <<EOF
+  vpc_security_group_ids = [ "${aws_security_group.public_squid.id}" ]
+  iam_instance_profile   = "STANDARD_profile"
+  user_data              = <<EOF
 #!/bin/bash -x
 curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
 EOF
