@@ -19,5 +19,5 @@ variable "region_zoneb" {
 }
 
 variable "centos-7-ami" {
-  default = "ami-0e1ab783dc9489f34"
+  default = "ami-08576e40ab2877d2a"
 }
