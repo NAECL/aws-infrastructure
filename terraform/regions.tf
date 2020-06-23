@@ -10,7 +10,7 @@
 # region[30]  =   ca-central-1   Canada (Central)
 
 # Europe West Regions
-# region[40]  =   eu-west-1      EU (Ireland)
+# region[40]  =   eu-west-1      EU (Dublin)
 # region[41]  =   eu-west-2      EU (London)
 # region[42]  =   eu-west-3      EU (Paris)
 
