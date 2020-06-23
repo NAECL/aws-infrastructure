@@ -1,0 +1,1 @@
+../../../aws-infrastructure-local/ami.Dublin.tf
