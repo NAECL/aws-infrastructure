@@ -1,5 +1,5 @@
 resource "aws_instance" "client" {
-  ami                    = "${var.cent7ami}"
+  ami                    = "${var.centos-7-ami}"
   instance_type          = "t2.small"
   key_name               = "aws-key"
   subnet_id              = "${aws_subnet.PublicA.id}"

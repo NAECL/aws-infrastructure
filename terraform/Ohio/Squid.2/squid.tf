@@ -4,7 +4,7 @@ variable "serverName" {
 }
 
 resource "aws_instance" "squid" {
-  ami                    = "${var.cent7ami}"
+  ami                    = "${var.centos-7-ami}"
   instance_type          = "t2.nano"
   key_name               = "aws-key"
   subnet_id              = "${aws_subnet.PublicA.id}"
