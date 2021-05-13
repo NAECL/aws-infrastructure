@@ -23,5 +23,5 @@ resource "aws_route53_record" "jenkins-dns" {
    name = "jenkins.${var.region_name}.${var.dnsDomain}"
    type = "A"
    ttl = "30"
-   records = ["${aws_instance.client.public_ip}"]
+   records = ["${aws_instance.jenkins.public_ip}"]
 }
