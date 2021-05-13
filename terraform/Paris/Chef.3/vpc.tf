@@ -1,6 +1,6 @@
 resource "aws_vpc" "VPC" {
   cidr_block    = "${local.vpc_CIDR}"
-  tags {
+  tags = {
     Name = "${var.region_name}.${var.environment} VPC"
     ResourceGroup = "${var.region_name}.${var.environment}"
   }
@@ -11,7 +11,7 @@ resource "aws_subnet" "PublicA" {
   availability_zone       = "${local.publicA_AZ}"
   vpc_id                  = "${aws_vpc.VPC.id}"
   map_public_ip_on_launch = true
-  tags {
+  tags = {
     Name = "${var.region_name}.${var.environment} Public A"
     ResourceGroup = "${var.region_name}.${var.environment}"
   }
@@ -22,7 +22,7 @@ resource "aws_subnet" "PrivateA" {
   availability_zone       = "${local.privateA_AZ}"
   vpc_id                  = "${aws_vpc.VPC.id}"
   map_public_ip_on_launch = false
-  tags {
+  tags = {
     Name = "${var.region_name}.${var.environment} Private A"
     ResourceGroup = "${var.region_name}.${var.environment}"
   }
@@ -30,7 +30,7 @@ resource "aws_subnet" "PrivateA" {
 
 resource "aws_internet_gateway" "Gw" {
   vpc_id = "${aws_vpc.VPC.id}"
-  tags {
+  tags = {
     Name = "${var.region_name}.${var.environment} IGW"
     ResourceGroup = "${var.region_name}.${var.environment}"
   }

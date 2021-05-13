@@ -9,7 +9,7 @@ resource "aws_instance" "master" {
 #!/bin/bash -x
 curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
 EOF
-  tags {
+  tags = {
     Name = "master"
     Role = "chef"
     Environment = "${var.region_name}.${var.environment}"

@@ -1,5 +1,5 @@
 variable "serverName" {
-  type    = "string"
+  type    = string
   default = "squid"
 }
 
@@ -14,7 +14,7 @@ resource "aws_instance" "squid" {
 #!/bin/bash -x
 curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
 EOF
-  tags {
+  tags = {
     Name = "${var.serverName}"
     Role = "squid"
     Environment = "${var.region_name}_${var.environment}"

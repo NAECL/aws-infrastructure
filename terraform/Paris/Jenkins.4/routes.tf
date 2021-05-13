@@ -4,7 +4,7 @@ resource "aws_route_table" "PublicRouteTable" {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.Gw.id}"
   }
-  tags {
+  tags = {
     Name = "${var.region_name}.${var.environment} Public Route Table"
     ResourceGroup = "${var.region_name}.${var.environment}"
   }
@@ -12,7 +12,7 @@ resource "aws_route_table" "PublicRouteTable" {
 
 resource "aws_route_table" "PrivateRouteTable" {
   vpc_id     = "${aws_vpc.VPC.id}"
-  tags {
+  tags = {
     Name = "${var.region_name}.${var.environment} Private Route Table"
     ResourceGroup = "${var.region_name}.${var.environment}"
   }

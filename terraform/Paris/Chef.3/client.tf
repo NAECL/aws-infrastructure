@@ -9,7 +9,7 @@ resource "aws_instance" "client" {
 #!/bin/bash -x
 curl http://aws.naecl.co.uk/public/build/bootstrap/install.sh | bash
 EOF
-  tags {
+  tags = {
     Name = "client"
     Role = "base"
     Installer = "chef"
