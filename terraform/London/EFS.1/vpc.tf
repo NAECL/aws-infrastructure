@@ -1,5 +1,7 @@
 resource "aws_vpc" "VPC" {
-  cidr_block    = "${local.vpc_CIDR}"
+  cidr_block           = "${local.vpc_CIDR}"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
   tags = {
     Name = "${var.region_name}_${var.environment} VPC"
     ResourceGroup = "${var.region_name}_${var.environment}"
