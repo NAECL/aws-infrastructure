@@ -64,6 +64,12 @@ then
         #
         yum install -y http://dl.fedoraproject.org/pub/epel/epel-release-latest-${release}.noarch.rpm
         yum install -y awscli
+
+        # Install AWS EFS Utils (Only currently availabe for el7)
+        if [ "${release}" == "7" ]
+        then
+            yum install -y http://aws.naecl.co.uk/public/build/dsl/amazon-efs-utils-1.7-1.el7.noarch.rpm
+        fi
     fi
 
     if [ "${distro}" == "Ubuntu" ]
