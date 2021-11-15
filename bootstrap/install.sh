@@ -1,4 +1,5 @@
 #!/bin/bash -ux
+# This script gets downloaded as /var/lib/cloud/instance/scripts/part-001 during install
 
 exec > /var/log/ami_install.log 2>&1
 
