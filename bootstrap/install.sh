@@ -206,12 +206,14 @@ then
     sed -i '/RESOURCE_GROUP=/d' /etc/build_custom_config >/dev/null 2>&1
     echo "RESOURCE_GROUP=${resource_group}" >> /etc/build_custom_config
 
+    # Modules can go anywhere, make it a standard place
+    module_dir=/etc/puppet/environments/${environment}/modules
+
     if [ "${distro}" == "CentOS" -o "${distro}" == "RedHatEnterpriseServer" ]
     then
         yum install -y https://yum.puppetlabs.com/puppet5/puppet5-release-el-${release}.noarch.rpm
         puppet=/opt/puppetlabs/bin/puppet
         puppet_root=/etc/puppetlabs/puppet
-        module_dir=${puppet_root}/code/environments/${environment}/modules
         yum install -y puppet
     fi
 
@@ -219,21 +221,19 @@ then
     then
         puppet=/usr/bin/puppet
         puppet_root=/etc/puppet
-        module_dir=${puppet_root}/environments/${environment}/modules
         yum install -y puppet
     fi
 
     if [ "${distro}" == "Ubuntu" ]
     then
         codename=$(lsb_release -c | awk '{print $2}')
-        wget https://apt.puppetlabs.com/puppet5-release-${codename}.deb
-        dpkg -i puppet5-release-${codename}.deb
+        wget https://apt.puppetlabs.com/puppet6-release-${codename}.deb
+        dpkg -i puppet6-release-${codename}.deb
         add-apt-repository ppa:certbot/certbot -y
         apt-get update
         apt-get install puppet-agent -y
         puppet=/opt/puppetlabs/bin/puppet
         puppet_root=/etc/puppetlabs/puppet
-        module_dir=${puppet_root}/code/environments/${environment}/modules
     fi
 
     # Create the full path, and remove the last dir
